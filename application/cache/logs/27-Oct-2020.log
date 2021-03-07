@@ -1,0 +1,8 @@
+########################[11:39:35]##########################------------------------------------------------------------Error Msgs : Uncaught Error: Call to undefined function db_query() in E:\data\data_website\htdocs\mugencode\application\models\action\proccess_edit.php:13
+Stack trace:
+#0 E:\data\data_website\htdocs\mugencode\system\core\core_controller.php(87): proccess_edit->__construct()
+#1 E:\data\data_website\htdocs\mugencode\application\register\config.php(18): controller->declarate_space(Array)
+#2 E:\data\data_website\htdocs\mugencode\application\config\autoload.php(179): require_once('E:\\data\\data_we...')
+#3 E:\data\data_website\htdocs\mugencode\index.php(68): require_once('E:\\data\\data_we...')
+#4 {main}
+  thrown------------------------------------------------------------Error Type : 1------------------------------------------------------------Error File : E:\data\data_website\htdocs\mugencode\application\models\action\proccess_edit.php------------------------------------------------------------Error Line : 13------------------------------------------------------------Error Date : 27-Oct-2020------------------------------------------------------------Error Time : 11:39:35------------------------------------------------------------
