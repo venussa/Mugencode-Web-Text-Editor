@@ -1,3 +1,8 @@
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+
 # What is mugencode
 <img src="https://github.com/venussa/Mugencode-Web-Text-Editor/blob/master/application/views/assets/img/iamroot.png" width="200">
 Mugencode is an Application Development Framework - a toolkit - for people
