@@ -2,6 +2,40 @@
 
 namespace system\core;
 
+/**
+ * IamRoot
+ *
+ * An open source application development framework for PHP
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018 - 2022, Iamroot Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	IamRoot
+ * @author	Shigansina
+ * @link	https://iam-root.tech
+ * @since	Version 1.0.0
+ * @filesource
+ */
+
 use application\config\dbconfig;
 use \PDO;
 
@@ -14,6 +48,7 @@ use \PDO;
  * @package		system
  * @subpackage	core
  * @category	Database Query
+ * @author		IamRoot Team
  * @throws 		\DBQuery On call Query
  */
 
@@ -21,18 +56,44 @@ class database extends DBQuery{
 
 	// --------------------------------------------------------------------
 
-	/**
-     *Prepare Query
+    /**
+     * Create query as json method
      *
      * @return array
      * @throws \DBQuery On call Query
      */
+		
+		public function bindQuery($data = null){
 
-		public function prepare($data, $db_name = null){
+			// connect to parrent class
+			$query = $this->Query($data);
+			$rowCount = $query->rowCount();
+			
+			//fetch array to json
+			$num_row = 0; 
 
-			$query = self::PDOconnect($db_name)->prepare($data);
+			while($fetch_array = $query->Fetch()) {
+			
+				foreach($fetch_array as $key => $value){
+			
+					$dist[$key] = $value;
+			
+				}
+			
+				$fist[$num_row] = $dist;
 
-			return $query;
+				$num_row++;
+			
+			}
+			
+			if(!isset($fist)){
+				
+				return false;
+				
+			}
+			
+			// return json result
+			return json_decode(json_encode($fist));
 		}
 
 	// --------------------------------------------------------------------
@@ -44,10 +105,8 @@ class database extends DBQuery{
      * @throws \DBQuery On call Query
      */
 
-		public function query($data, $db_name = null){
-
-			$query = self::PDOconnect($db_name)->query($data);
-
+		public function Query($data){
+			$query = self::PDOconnect()->query($data);
 			return $query;
 		}
 
@@ -60,8 +119,8 @@ class database extends DBQuery{
      * @throws \DBQuery On call Query
      */
 
-		public function fetch($data, $db_name = null){
-			$query = self::PDOconnect($db_name)->query($data)->fetch();
+		public function Fetch($data){
+			$query = self::PDOconnect()->query($data)->fetch();
 			return @$query;
 		}
 
@@ -74,8 +133,8 @@ class database extends DBQuery{
      * @return numeric
      * @throws \DBQuery On call Query
      */
-		public function rowCount($data, $db_name = null){
-			$query = self::PDOconnect($db_name)->query($data)->rowCount();
+		public function rowCount($data){
+			$query = self::PDOconnect()->query($data)->rowCount();
 			return @$query;	
 		}
 
@@ -88,8 +147,8 @@ class database extends DBQuery{
      * @throws \DBQuery On call Query
      */
 
-		public function fetchAssoc($data, $db_name = null){
-			$query = self::PDOconnect($db_name)->query($data)->fetch(PDO::FETCH_ASSOC);
+		public function fetchAssoc($data){
+			$query = self::PDOconnect()->query($data)->fetch(PDO::FETCH_ASSOC);
 			return @$query;
 		}
 
@@ -108,11 +167,9 @@ class DBQuery extends dbconfig{
      * @throws \PDO to connect driver
      */
 
-	protected function PDOconnect($db_name = null){
+	protected function PDOconnect(){
 
-		if(empty($db_name)) $db_name = (new dbconfig)->information()->database;
-
-		$db = new PDO('mysql:host='.(new dbconfig)->information()->hostname.';dbname='.$db_name,(new dbconfig)->information()->username, (new dbconfig)->information()->password);
+		$db = new PDO('mysql:host='.(new dbconfig)->information()->hostname.';dbname='.(new dbconfig)->information()->database,(new dbconfig)->information()->username, (new dbconfig)->information()->password);
 		$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		return $db;
 

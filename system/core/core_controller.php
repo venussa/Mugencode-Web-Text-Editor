@@ -1,5 +1,41 @@
 <?php
 
+namespace system\core;
+
+/**
+ * IamRoot
+ *
+ * An open source application development framework for PHP
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018 - 2022, Iamroot Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	IamRoot
+ * @author	Shigansina
+ * @link	https://iam-root.tech
+ * @since	Version 1.0.0
+ * @filesource
+ */
+
 use application\config\routes;
 use system\core\method;
 use system\library\user_agent;
@@ -15,9 +51,87 @@ use system\library\SimpleImage;
  * @package		system
  * @subpackage	core
  * @category	site controller
+ * @author		IamRoot Team
  */
 
 class controller{
+
+	// --------------------------------------------------------------------
+
+    /**
+     * Read paramater from method
+     *
+     * @return string
+     * @return array
+     * @return mixed
+     */
+	private function filter_paramater($type){
+		
+		switch($type){
+			
+			// fillter GET method
+			case "GET" :
+
+					foreach((new method)->get() as $key => $val){
+
+						$feedback[$key] = $val;
+						$response = true;
+						
+					}
+			
+				if(isset($response)){
+			
+					return $feedback;
+			
+				}else{
+			
+					return array();
+			
+				}
+		break;
+
+
+		// filter SERVER method
+		case "SERVER" :
+			
+					foreach($_SERVER as $key => $val){
+						$feedback[$key] = $val;
+						$response = true;
+					}
+			
+				if(isset($response)){
+			
+					return $feedback;
+			
+				}else{
+			
+					return array();
+			
+				}
+		break;
+
+
+		// filter POST method
+		case "POST" :
+			
+					foreach($_POST as $key => $val){
+						$feedback[$key] = $val;
+						$response = true;
+					}
+			
+				if(isset($response)){
+			
+					return $feedback;
+			
+				}else{
+			
+					return array();
+			
+				}
+		break;
+		}
+	}
+
 
 	// --------------------------------------------------------------------
 
@@ -28,117 +142,95 @@ class controller{
      * @return mixed
      */
 
-	public function declarate_space($data,$config = false){
+	public function declarate_space($data,$config = null){
+		
+		// rebuilt especially parameter from GET method
+		foreach (self::filter_paramater("GET") as $key => $value) {
+
+			$_GET[$key] = $value;
+
+		}
+
+		// rebuilt especially parameter from post method
+		foreach (self::filter_paramater("POST") as $key => $value) {
+
+			$_POST[$key] = $value;
+
+		}
 
 		(new link_relation);
+
+
+
+			$path = SERVER."/application/controller/".(new routes)->load_controller()['internal_proccess'].".php";
+
+			if(is_file($path)){
+
+				set_error_handler("handleError");
+    			
+    			register_shutdown_function('ShutDown');
+				
+				require_once($path);
+
+			}
+
+		if(!isset($data_value)){
+
+			$data_value = array("" => "");
+
+		}else{
+
+			foreach ($data_value as $key => $value) {
+				
+				$create_list["{".$key."}"] = $value;
+			}
+
+			$data_value = $create_list;
+
+		}
+
 		
 
-		if(!empty(splice(1)) and (splice(1) !== "index.php")) {
+		if(!empty(splice(1))){
 			
 			// checking and sellection
 			
-			if(in_array(splice(1),$data)) {
+			if(in_array(splice(1),array_keys($data))){
 
 				// amp mode detection
 
 				foreach($data as $key => $val){
 
-					if(splice(1) == $val){
+					if(splice(1) == $key){
 
 						// url found
-						$path = SERVER."/application/controllers/".$val.".php";
+						$path = SERVER."/application/views/".self::amp_mode($data,$val).".php";
 
-						if(file_exists(DirSeparator($path))){	
-		    			
-			    			set_error_handler("handleError");
-			    			
-			    			register_shutdown_function('ShutDown');
-			    		
+						if(is_file(DirSeparator($path))){
+
+							set_error_handler("handleError");
+    			
+    						register_shutdown_function('ShutDown');
+							
+						    ob_start();
+
 				            require_once(DirSeparator($path));
 
-				            ob_start();
+				            $ob = ob_get_clean();
 
-				            $def_class = splice(1);
-
-				            if(class_exists($def_class))
-				            $call_class = new $def_class();
-
-				        	else{
-				        		$this->notfound();
-				        		exit;
-				        	}
-
-				            $ob = ob_get_clean();			
-
-
-
-							if(!empty(splice(2))){
-
-								$models_path = SERVER."/application/models/".splice(1)."/".splice(2).".php";
-
-								if(file_exists($models_path)){
-
-									require_once($models_path);
-
-									$models_name = splice(2);
-
-									if(class_exists($models_name)){
-
-										$models = new $models_name;
-
-										exit;
-
-									}elseif(method_exists($call_class, splice(2))){
-
-										$func_name = splice(2);
-
-										$call_class->$func_name();
-
-										exit;
-
-									}else{
-
-										$this->notfound();
-										exit;
-									}
-
-								}elseif(method_exists($call_class, splice(2))){
-
-									$func_name = splice(2);
-
-									$call_class->$func_name();
-
-									if(class_exists($func_name))
-									(new $func_name());
-
-									exit;
-
-								}else{
-
-									$this->notfound();
-									exit;
-								}
-
-							}elseif(method_exists($call_class, "home")){
-							
-								$call_class->home();
-
-							}else{
-
-								$this->notfound();
-								exit;
-
-							}
-
-							echo $ob;
-
-				    		exit;
+				            echo str_replace(array_keys($data_value),$data_value, $ob);
+				           
+							exit;
 
 						}else{
 
-							$this->notfound();
+							//url found but target not found
+							set_error_handler("handleError");
+    			
+    						register_shutdown_function('ShutDown');
+
+							require_once(SERVER."/404.php");
 							exit;
-							
 						}
 					}
 				}
@@ -148,7 +240,7 @@ class controller{
 				// url not found
 				if(splice(1) == "image"){
 
-					$source_img = decrypt(splice(2));
+				$source_img = decrypt(splice(2));
 
 					if($source_img !== false){
 
@@ -177,224 +269,163 @@ class controller{
 
 				}else{
 
-					//url found but target not found
+					if(isset($data['cusTom'])){
 
-					if($config == true){
+						$path = SERVER."/application/views/".self::amp_mode($data,$data['cusTom']).".php";
 
-						$path = SERVER."/application/controllers/defaults.php";
+						if(is_file(DirSeparator($path))){
 
-						if(file_exists(DirSeparator($path))){	
-		    			
-			    			set_error_handler("handleError");
-			    			
-			    			register_shutdown_function('ShutDown');
-			    		
-				            require_once(DirSeparator($path));
+							set_error_handler("handleError");
+    			
+    						register_shutdown_function('ShutDown');
 
-				            ob_start();
+							ob_start();
 
-				            $def_class = "defaults";
+							require_once($path);
 
-				            if(class_exists($def_class))
-				            $call_class = new $def_class();
+							$ob = ob_get_clean();
 
-				        	else{
-				        		$this->notfound();
-				        		exit;
-				        	}
+				            echo str_replace(array_keys($data_value),$data_value, $ob);
 
-				            $ob = ob_get_clean();			
-
-
-
-							if(!empty(splice(2))){
-
-								$models_path = SERVER."/application/models/defaults/".splice(2).".php";
-
-								if(file_exists($models_path)){
-
-									require_once($models_path);
-
-									$models_name = splice(2);
-
-									if(class_exists($models_name)){
-
-										$models = new $models_name;
-
-										exit;
-
-									}elseif(method_exists($call_class, splice(2))){
-
-										$func_name = splice(2);
-
-										$call_class->$func_name();
-
-										exit;
-
-									}else{
-
-										$this->notfound();
-										exit;
-									}
-
-								}elseif(method_exists($call_class, splice(2))){
-
-									$func_name = splice(2);
-
-									$call_class->$func_name();
-
-									if(class_exists($func_name))
-									(new $func_name());
-
-									exit;
-
-								}else{
-
-									$this->notfound();
-									exit;
-								}
-
-							}elseif(method_exists($call_class, "home")){
-							
-								$call_class->home();
-
-							}else{
-
-								$this->notfound();
-								exit;
-
-							}
-
-							echo $ob;
-
-				    		exit;
-
-						}else{
-
-							$this->notfound();
 							exit;
-							
+
 						}
 
-					}else{
-						
-						$this->notfound();
-						exit;
+					}
+
+					set_error_handler("handleError");
+    			
+    				register_shutdown_function('ShutDown');
+    				
+					require_once(SERVER."/404.php");	
+					
 				}
 
 				exit;
 
 			}
-		}
 
 		}else{
 			
 			// set default target
+			if(isset($data['cusTom'])){
 
-			$path = SERVER."/application/controllers/index.php";
+				$path = SERVER."/application/views/".self::amp_mode($data,$data['cusTom']).".php";
 
-			if(file_exists(DirSeparator($path))){	
-		    			
-    			set_error_handler("handleError");
+				if(is_file(DirSeparator($path))){
+
+					set_error_handler("handleError");
     			
-    			register_shutdown_function('ShutDown');
-    		
-	            require_once(DirSeparator($path));
+    				register_shutdown_function('ShutDown');
 
-	            ob_start();
+					ob_start();
 
-	            $def_class = "index";
+					require_once(DirSeparator($path));
+					
+					$ob = ob_get_clean();
 
-	            if(class_exists($def_class))
-	            $call_class = new $def_class();
+				    echo str_replace(array_keys($data_value),$data_value, $ob);
 
-	        	else{
-	        		$this->notfound();
-	        		exit;
-	        	}
-
-	            $ob = ob_get_clean();			
-
-
-
-				if(!empty(splice(2))){
-
-					$models_path = SERVER."/application/models/".splice(1)."/".splice(2).".php";
-
-					if(file_exists($models_path)){
-
-						require_once($models_path);
-
-						$models_name = splice(2);
-
-						if(class_exists($models_name)){
-
-							$models = new $models_name;
-
-							exit;
-
-						}elseif(method_exists($call_class, splice(2))){
-
-							$func_name = splice(2);
-
-							$call_class->$func_name();
-
-							exit;
-
-						}else{
-
-							$this->notfound();
-							exit;
-						}
-
-					}elseif(method_exists($call_class, splice(2))){
-
-						$func_name = splice(2);
-
-						$call_class->$func_name();
-
-						exit;
-
-					}else{
-
-						$this->notfound();
-						exit;
-					}
-
-				}elseif(method_exists($call_class, "home")){
-				
-					$call_class->home();
-
-				}else{
-
-					$this->notfound();
 					exit;
 
 				}
 
-				echo $ob;
+			}
+
+
+			$path = SERVER."/application/views/".self::amp_mode($data,$config)."index.php";
+
+			if(is_file(DirSeparator($path))){		
+    			
+    			set_error_handler("handleError");
+    			
+    			register_shutdown_function('ShutDown');
+
+    			ob_start();
+
+	            require_once(DirSeparator($path));
+	        	
+	        	$ob = ob_get_clean();
+
+				echo str_replace(array_keys($data_value),$data_value, $ob);
 
 	    		exit;
 
 			}else{
 
-				require_once(SERVER."/content/mugencode.php");	
+				echo "WELCOME TO OUR FRAME WORK";	
 
 				exit;
 				
-			}
+				}
 			
-		}
+			}
 	}
 
+	// --------------------------------------------------------------------
 
-	function notfound(){
+    /**
+     * Accelerate Moible Page
+     *
+     * @return void
+     * @throws \user_agen on device checker
+     */
 
-		set_error_handler("handleError");
-    			
-		register_shutdown_function('ShutDown');
+	private function amp_mode($data,$url){
 
-		require_once(SERVER."/404.php");
+		if(isset($data[splice(1)])){
+
+			if(is_array($data[splice(1)])){
+
+				if((new user_agent)->is_mobile()){
+
+					$_SESSION['amp'] = "/mobile";
+
+					$amp_mode = "/mobile/".$url['amp'];
+
+				}else{
+
+					$_SESSION['amp'] = "/desktop";
+
+					$amp_mode = "/desktop/".$url['amp'];
+				}
+
+			}else{
+
+				$_SESSION['amp'] = null;
+
+				$amp_mode = $url;
+
+			}
+
+		}else{
+
+			if(is_array($url)){
+
+				if((new user_agent)->is_mobile()){
+
+					$_SESSION['amp'] = "/mobile";
+
+					$amp_mode = "/mobile/".$url['amp'];
+
+				}else{
+
+					$_SESSION['amp'] = "/desktop";
+
+					$amp_mode = "/desktop/".$url['amp'];
+				}
+
+			}else{
+
+				$_SESSION['amp'] = null;
+
+				$amp_mode = $url;
+
+			}
+
+		}
+
+		return $amp_mode;
 
 	}
 

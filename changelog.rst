@@ -2,6 +2,6 @@
 VERSION BETA 1.0
 #################
 
-Release Date: April 25, 2020
+Release Date: December 27, 2018
 
 Devlopeer Only

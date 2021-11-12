@@ -1,5 +1,37 @@
 <?php
-
+/**
+ * IamRoot
+ *
+ * An open source application development framework for PHP
+ *
+ * This content is released under the MIT License (MIT)
+ *
+ * Copyright (c) 2018 - 2022, Iamroot Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	IamRoot
+ * @author	Shigansina
+ * @link	https://iam-root.tech
+ * @since	Version 1.0.0
+ * @filesource
+ */
 if(!function_exists("is_https")){
 	
 	/**
@@ -24,15 +56,15 @@ if(!function_exists("is_https")){
 		}
 
 
-		if($command == true){
+	if($command == true){
 
-			return $protocol;
+		return $protocol;
 
-		}else{
+	}else{
 
-			return $response;
-		}
+		return $response;
 	}
+}
 }
 
 if(!function_exists("domain")){
@@ -78,7 +110,7 @@ if(!function_exists("homeUrl")){
 }
 
 
-if(!function_exists("sourceUrl")){
+if(!function_exists("projectUrl")){
 
 	/**
 	 * Project Url
@@ -86,29 +118,62 @@ if(!function_exists("sourceUrl")){
 	 * @param	string
 	 * @return	String
 	 */
-	function sourceUrl($response = false){
+	function projectUrl($response = false){
 
 		if($response == true){
 
 			if(!empty($_SESSION['amp'])){
 
-				return DirSeparator(homeUrl()."/sources/".$_SESSION['amp']);
+				return DirSeparator(homeUrl()."/application/views/".$_SESSION['amp']);
 
 			}else{
 
-				return homeUrl()."/sources";
+				return homeUrl()."/application/views";
 
 			}
 		
 		}else{
 
-			return homeUrl()."/sources";
+			return homeUrl()."/application/views";
 		
 		}
 
 	}
 
 }
+
+if(!function_exists("projectDir")){
+	/**
+	 * Project Dir
+	 *
+	 * @param	string
+	 * @return	String
+	 */
+
+	function projectDir($response = false){
+		
+		if($response == true){
+
+			if(!empty($_SESSION['amp'])){
+
+				return DirSeparator(SERVER."/application/views/".$_SESSION['amp']);
+
+			}else{
+
+				return SERVER."/application/views";
+
+			}
+		
+		}else{
+
+			return SERVER."/application/views";
+		
+		}
+
+	}		
+}
+
+
 
 if(!function_exists("documentUrl")){
 	/**
@@ -238,42 +303,6 @@ if(!function_exists("redirect")){
 		}
 
 		echo "<meta http-equiv='refresh' content='".$interval."; url=".$url."' />";
-
-	}
-
-}
-
-if(!function_exists("alert")){
-
-	/**
-	 * alert
-	 *
-	 * @param	text
-	 * @return	void
-	 */
-
-	function alert($text = null){
-
-		if(!empty($text))
-		echo "<script>alert('".str_replace("'",null,$text)."');</script>";
-
-	}
-
-}
-
-if(!function_exists("window_location")){
-
-	/**
-	 * window location
-	 *
-	 * @param	text
-	 * @return	void
-	 */
-
-	function window_location($url = null){
-
-		if(!empty($url))
-		echo "<script>window.location='$url';</script>";
 
 	}
 
