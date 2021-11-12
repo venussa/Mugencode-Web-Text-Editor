@@ -1,10 +1,11 @@
+# What is mugencode
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-
-# What is mugencode
+<p>
 <img src="https://github.com/venussa/Mugencode-Web-Text-Editor/blob/master/application/views/assets/img/iamroot.png" width="200">
+</p>
 Mugencode is an Application Development Framework - a toolkit - for people
 who build web sites using PHP. Its goal is to enable you to develop projects
 much faster than you could if you were writing code from scratch, by providing
@@ -43,9 +44,19 @@ contributors to the mugencode project and you, the mugencode user.
 4. File manager (Create file/directory, upload, delete, create/extract archive, etc)
 5. Text editor (Exclusive in PHP, Python, CSS, Javascript, Json)
 6. Find & Replace
-7. Auto save file
-8. Data export
-9. and many more
+7. Terminal
+8. Auto save file
+9. Data export
+10. and many more
 
 ![alt text](https://github.com/venussa/Mugencode-Web-Text-Editor/blob/master/documentation/ss1.jpeg)
 ![alt text](https://github.com/venussa/Mugencode-Web-Text-Editor/blob/master/documentation/ss2.jpeg)
+
+[contributors-shield]: https://img.shields.io/github/contributors/venussa/Mugencode-Web-Text-Editor.svg?style=for-the-badge
+[contributors-url]: https://github.com/venussa/Mugencode-Web-Text-Editor/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/venussa/Mugencode-Web-Text-Editor.svg?style=for-the-badge
+[forks-url]: https://github.com/venussa/Mugencode-Web-Text-Editor/network/members
+[stars-shield]: https://img.shields.io/github/stars/venussa/Mugencode-Web-Text-Editor.svg?style=for-the-badge
+[stars-url]: https://github.com/venussa/Mugencode-Web-Text-Editor/stargazers
+[issues-shield]: https://img.shields.io/github/issues/venussa/Mugencode-Web-Text-Editor.svg?style=for-the-badge
+[issues-url]: https://github.com/venussa/Mugencode-Web-Text-Editor/issues
